@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1002182005108",
+    "firebase_url": "https://radioklais.firebaseio.com",
+    "project_id": "radioklais",
+    "storage_bucket": "radioklais.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002182005108:android:2d06cef83ae7cc5a6d1c21",
+        "android_client_info": {
+          "package_name": "com.example.radioklais"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1002182005108-k1trb0kf3fvhcu48rk94eplhofntsmdk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.radioklais",
+            "certificate_hash": "2c68413a0e41991d9cc8bab2467637db91f129a9"
+          }
+        },
+        {
+          "client_id": "1002182005108-6mici1u3qc14d0ekcmrh38rl97mnkjcs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTlcmPT210F8jmXpSx2u9wj1dVV6PQtHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1002182005108-6mici1u3qc14d0ekcmrh38rl97mnkjcs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
