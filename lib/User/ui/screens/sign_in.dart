@@ -14,27 +14,13 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreen extends State<SignInScreen> {
   UserBloc userBloc;
   @override
-  final myController = TextEditingController();
-  bool view_password = true;
   Widget build(BuildContext context) {
-    // TODO: implement build
     userBloc = BlocProvider.of(context);
 
     return singInGoogleUI();
   }
 
-  Widget _handleCurrentSesion(){
-
-  }
-
   Widget singInGoogleUI() {
-    final registrate = Text("Inicia sesión con:",
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: "ubuntu",
-          fontSize: 18.0,
-        ));
-
     final photoKlias = Container(
       width: 175.0,
       height: 175.0,

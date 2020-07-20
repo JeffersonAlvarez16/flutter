@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,9 +19,9 @@ class ReproductoRadio extends StatefulWidget {
 }
 
 class _ReproductoRadio extends State<ReproductoRadio> {
-  ProgramacionBloc _programacionBloc;
-  String time_position;
-  bool en_vivo = false;
+  ProgramacionBloc programacionBloc;
+  String timePosition;
+  bool enVivo = false;
   DocumentSnapshot items;
   List<DocumentSnapshot> auspiciantes;
   UserBloc userBloc;
@@ -70,8 +68,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
     }
   }
 
-  @override
-  Widget Auspiciantes(BuildContext context, double width) {
+  Widget auspiciantesA(BuildContext context, double width) {
     return StreamBuilder(
         stream: Firestore.instance.collection("auspiciantes").snapshots(),
         builder: (context, snapshot) {
@@ -199,7 +196,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
         });
   }
 
-  Widget ProgramaActual(BuildContext context, double width) {
+  Widget programaActual(BuildContext context, double width) {
     return StreamBuilder(
         stream: Firestore.instance.collection("programa_actual").snapshots(),
         builder: (context, snapshot) {
@@ -330,7 +327,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
   }
 
   Widget build(BuildContext context) {
-    _programacionBloc = BlocProvider.of<ProgramacionBloc>(context);
+    programacionBloc = BlocProvider.of<ProgramacionBloc>(context);
     userBloc = BlocProvider.of<UserBloc>(context);
     double width = MediaQuery.of(context).size.width;
 
@@ -344,7 +341,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  ProgramaActual(context, width),
+                  programaActual(context, width),
                   Container(
                     margin: EdgeInsets.only(bottom: 4.0),
                     padding: EdgeInsets.only(left: 40.0, top: 20.0),
@@ -353,7 +350,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
                       style: TextStyle(color: Colors.white70, fontSize: 20.0),
                     ),
                   ),
-                  Auspiciantes(context, width),
+                  auspiciantesA(context, width),
                 ],
               )),
         ),

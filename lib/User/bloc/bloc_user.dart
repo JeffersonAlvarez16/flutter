@@ -5,20 +5,20 @@ import "package:radioklais/User/repository/auth_repository.dart";
 import "package:firebase_auth/firebase_auth.dart";
 
 class UserBloc implements Bloc {
-  final _aut_repository = AuthRepository();
-  AudioPlayer player= AudioPlayer();
+  final autRepository = AuthRepository();
+  AudioPlayer player = AudioPlayer();
   final assetsAudioPlayer = AssetsAudioPlayer();
   int tiempo;
-  String titulo="";
-  String horario="";
-  AudioPlaybackState estadoRadioPlayer=null;
-  AudioPlaybackState estado=null;
+  String titulo = "";
+  String horario = "";
+  AudioPlaybackState estadoRadioPlayer;
+  AudioPlaybackState estado;
 
   AudioPlaybackState get estadoPlayer {
     return estadoRadioPlayer;
   }
 
-  void set estadoPlayer(AudioPlaybackState estadoRadio) {
+  set estadoPlayer(AudioPlaybackState estadoRadio) {
     estadoRadioPlayer = estadoRadio;
   }
 
@@ -26,7 +26,7 @@ class UserBloc implements Bloc {
     return estado;
   }
 
-  void set estadoRadio(AudioPlaybackState estadoR) {
+  set estadoRadio(AudioPlaybackState estadoR) {
     estado = estadoR;
   }
 
@@ -34,7 +34,7 @@ class UserBloc implements Bloc {
     return tiempo;
   }
 
-  void set radio(AudioPlayer radio) {
+  set radio(AudioPlayer radio) {
     player = radio;
   }
 
@@ -42,7 +42,7 @@ class UserBloc implements Bloc {
     return titulo;
   }
 
-  void set title(String titulos) {
+  set title(String titulos) {
     titulo = titulos;
   }
 
@@ -50,42 +50,22 @@ class UserBloc implements Bloc {
     return horario;
   }
 
-  void set horas(String hora) {
+  set horas(String hora) {
     horario = hora;
   }
 
-  AudioPlayer get radio {
-    return player;
-  }
-
-  void set age(int tiempos) {
-    tiempo = tiempos;
-  }
-  retornarRadio()async{
-    try {
-     return await assetsAudioPlayer;
-    } catch (t) {
-      return "Error";
-    }
-  }
-
-  Stream<FirebaseUser> streamFirebase=FirebaseAuth.instance.onAuthStateChanged;
-
-
-
-
+  Stream<FirebaseUser> streamFirebase =
+      FirebaseAuth.instance.onAuthStateChanged;
 
   Future<FirebaseUser> signIn() {
-    return _aut_repository.signInFirebase();
+    return autRepository.signInFirebase();
   }
 
-  signOut(){
-    return _aut_repository.signOut();
+  signOut() {
+    return autRepository.signOut();
   }
 
-
-
-  Stream<FirebaseUser> get authStatus=>streamFirebase;
+  Stream<FirebaseUser> get authStatus => streamFirebase;
   @override
   void dispose() {}
 }

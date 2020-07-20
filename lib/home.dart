@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:radioklais/Programacion/bloc/bloc_programacion.dart';
 import 'package:radioklais/Programacion/ui/widget/home_radio.dart';
 import 'package:radioklais/Programacion/ui/widget/programacion_semanal.dart';
 import 'package:radioklais/User/ui/screens/sign_in.dart';
@@ -21,24 +20,17 @@ class HomeKlais extends StatefulWidget {
 
 class _KlaisRadio extends State<HomeKlais> {
   int indexTap = 0;
-  PageController _pageController;
   DocumentSnapshot items;
   int currentIndex = 0;
   int tiempo = 0;
   UserBloc userBloc;
   @override
-  AudioPlayer _player;
-  ProgramacionBloc _programacionBloc;
-
   void dispose() {
-    // TODO: implement dispose
-
     super.dispose();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     AudioPlayer.setIosCategory(IosCategory.playback);
 
     super.initState();
@@ -58,7 +50,6 @@ class _KlaisRadio extends State<HomeKlais> {
   Widget build(BuildContext context) {
     // TODO: implement build
     userBloc = BlocProvider.of<UserBloc>(context);
-    double width = MediaQuery.of(context).size.width;
     if (userBloc.estadoPlayer == null) {
       userBloc.player.setUrl(
           "https://adminradio.klais.ec/radio/8020/radio.mp3?1593215539");
@@ -192,7 +183,6 @@ class _KlaisRadio extends State<HomeKlais> {
                           StreamBuilder<Duration>(
                             stream: userBloc.player.durationStream,
                             builder: (context, snapshot) {
-                              final duration = snapshot.data ?? Duration.zero;
                               return StreamBuilder<Duration>(
                                 stream: userBloc.player.getPositionStream(),
                                 builder: (context, snapshot) {
@@ -360,7 +350,7 @@ class _KlaisRadio extends State<HomeKlais> {
     );
   }
 
-  Widget _Drawer(AsyncSnapshot snapshot) {
+  Widget drawer(AsyncSnapshot snapshot) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -368,7 +358,7 @@ class _KlaisRadio extends State<HomeKlais> {
           Container(
             height: 160.0,
             child: DrawerHeader(
-                child: _DrawerHeader(snapshot),
+                child: drawerHeader(snapshot),
                 decoration: BoxDecoration(
                   color: Colors.black,
                 )),
@@ -407,14 +397,15 @@ class _KlaisRadio extends State<HomeKlais> {
         if (!snaphot.hasData || snaphot.hasError) {
           return SignInScreen();
         } else {
-          return _Drawer(snaphot);
+          return drawer(snaphot);
         }
       },
     );
   }
 
-  Widget _DrawerHeader(AsyncSnapshot snapshot) {
+  Widget drawerHeader(AsyncSnapshot snapshot) {
     if (!snapshot.hasData || snapshot.hasError) {
+      return CircularProgressIndicator();
     } else {
       return Container(
         margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),

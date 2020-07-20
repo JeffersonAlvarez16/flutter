@@ -4,32 +4,26 @@ import "package:flutter/material.dart";
 import 'package:generic_bloc_provider/generic_bloc_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:radioklais/User/bloc/bloc_user.dart';
-import 'package:date_format/date_format.dart';
 
 class ListaProgramas extends StatefulWidget {
-  List lista;
+  final List lista;
 
-  ListaProgramas(List lista) {
-    this.lista = lista;
-  }
+  ListaProgramas({@required this.lista});
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _ListaProgramas(lista);
+    return _ListaProgramas(lista: this.lista);
   }
 }
 
 class _ListaProgramas extends State<ListaProgramas> {
-  List lista;
+  final List lista;
   List itemSeleccionado = [];
   AudioPlayer _player;
   UserBloc userBloc;
   final assetsAudioPlayer = AssetsAudioPlayer();
 
-  @override
   void dispose() {
-    // TODO: implement dispose
     _player.stop();
     super.dispose();
   }
@@ -41,13 +35,10 @@ class _ListaProgramas extends State<ListaProgramas> {
     super.initState();
   }
 
-  @override
-  _ListaProgramas(List lista) {
-    this.lista = lista;
-  }
+  _ListaProgramas({@required this.lista});
 
   void abrirAudio(String url) async {
-    _player.setUrl("${url}").catchError((error) {
+    _player.setUrl("$url").catchError((error) {
       // catch audio error ex: 404 url, wrong url ...
       print(error);
     });
@@ -55,24 +46,21 @@ class _ListaProgramas extends State<ListaProgramas> {
     _player.play();
   }
 
-  encontrarDiferencia(String fecha){
-    var dateFirestore=DateTime.parse(fecha);
+  encontrarDiferencia(String fecha) {
+    var dateFirestore = DateTime.parse(fecha);
     print(dateFirestore);
-    final fecha_progrmama =dateFirestore;
+    final fechaProgrmama = dateFirestore;
     final date2 = DateTime.now();
-    final difference = date2.difference(fecha_progrmama).inDays;
+    final difference = date2.difference(fechaProgrmama).inDays;
     print(difference);
     return difference;
   }
-
 
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     userBloc = BlocProvider.of<UserBloc>(context);
-    Widget ProgramacionAnterior() {
-      print("id entrante");
-      print(lista[0]['id']);
+    Widget programacionAnterior() {
       return new StreamBuilder(
           stream: Firestore.instance
               .collection("programas_anteriores")
@@ -142,13 +130,12 @@ class _ListaProgramas extends State<ListaProgramas> {
                               Container(
                                 margin: EdgeInsets.only(top: 4.0),
                                 child: Text(
-                                 '${item['date']} - ${item['duracion']}',
+                                  '${item['date']} - ${item['duracion']}',
                                   style: TextStyle(
                                       color: Colors.white54,
                                       fontFamily: "Ubuntu"),
                                 ),
                               ),
-
                             ],
                           ),
                           GestureDetector(
@@ -180,7 +167,7 @@ class _ListaProgramas extends State<ListaProgramas> {
           });
     }
 
-    Widget ProgramaActual() {
+    Widget programaActual() {
       return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -272,7 +259,7 @@ class _ListaProgramas extends State<ListaProgramas> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    ProgramaActual(),
+                    programaActual(),
                     Container(
                       margin: EdgeInsets.only(bottom: 4.0),
                       padding: EdgeInsets.only(left: 40.0, top: 20.0),
@@ -283,7 +270,7 @@ class _ListaProgramas extends State<ListaProgramas> {
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: 75.0, top: 12.0),
-                      child: ProgramacionAnterior(),
+                      child: programacionAnterior(),
                     ),
                   ],
                 )))
@@ -301,12 +288,11 @@ class _ListaProgramas extends State<ListaProgramas> {
                     topRight: const Radius.circular(30.0),
                   ),
                 ),
-                child: Row(crossAxisAlignment:
-                  CrossAxisAlignment.center,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Container(
-
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -314,12 +300,12 @@ class _ListaProgramas extends State<ListaProgramas> {
                           Container(
                               padding: EdgeInsets.only(left: 20.0),
                               child: Text(
-                            "${itemSeleccionado[0]['titulo']}",
-                            style: TextStyle(
-                                color: Colors.white70,
-                                fontFamily: "Ubuntu",
-                                fontSize: 16.0),
-                          )),
+                                "${itemSeleccionado[0]['titulo']}",
+                                style: TextStyle(
+                                    color: Colors.white70,
+                                    fontFamily: "Ubuntu",
+                                    fontSize: 16.0),
+                              )),
                           Container(
                             padding: EdgeInsets.only(left: 20.0),
                             child: Text(
@@ -378,11 +364,12 @@ class _ListaProgramas extends State<ListaProgramas> {
                             IconButton(
                               icon: Icon(Icons.pause, color: Colors.red[900]),
                               iconSize: 40.0,
-                              onPressed:(){
+                              onPressed: () {
                                 _player.pause();
                                 userBloc.player.play();
-                                userBloc.estadoRadio = AudioPlaybackState.playing;
-                                },
+                                userBloc.estadoRadio =
+                                    AudioPlaybackState.playing;
+                              },
                             )
                           else if (state == AudioPlaybackState.completed)
                             IconButton(
@@ -399,7 +386,8 @@ class _ListaProgramas extends State<ListaProgramas> {
                                     milliseconds: 0);
                                 _player.seek(dura);
                                 userBloc.player.pause();
-                                userBloc.estadoRadio = AudioPlaybackState.paused;
+                                userBloc.estadoRadio =
+                                    AudioPlaybackState.paused;
                                 _player.play();
                               },
                             )
@@ -410,11 +398,12 @@ class _ListaProgramas extends State<ListaProgramas> {
                                 color: Colors.red[900],
                               ),
                               iconSize: 40.0,
-                              onPressed: (){
+                              onPressed: () {
                                 userBloc.player.pause();
-                                userBloc.estadoRadio = AudioPlaybackState.paused;
+                                userBloc.estadoRadio =
+                                    AudioPlaybackState.paused;
                                 _player.play();
-                                },
+                              },
                             ),
                         ]);
                       },
@@ -471,7 +460,10 @@ class _SeekBarState extends State<SeekBar> {
             }
           },
         ),
-        Text("${_dragValue ?? widget.position.inHours.toInt()}:${_dragValue ?? widget.position.inMinutes.toInt()}:${_dragValue ?? widget.position.inSeconds.toInt()}/${_dragValue ?? widget.duration.inHours.toInt()}:${_dragValue ?? widget.duration.inMinutes.toInt()}:${_dragValue ?? widget.duration.inSeconds.toInt()}",style: TextStyle(color: Colors.white,fontSize: 11.0),)
+        Text(
+          "${_dragValue ?? widget.position.inHours.toInt()}:${_dragValue ?? widget.position.inMinutes.toInt()}:${_dragValue ?? widget.position.inSeconds.toInt()}/${_dragValue ?? widget.duration.inHours.toInt()}:${_dragValue ?? widget.duration.inMinutes.toInt()}:${_dragValue ?? widget.duration.inSeconds.toInt()}",
+          style: TextStyle(color: Colors.white, fontSize: 11.0),
+        )
       ],
     );
   }
