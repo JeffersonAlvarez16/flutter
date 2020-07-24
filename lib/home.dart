@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
@@ -9,6 +12,8 @@ import 'package:radioklais/Programacion/ui/widget/programacion_semanal.dart';
 import 'package:radioklais/User/ui/screens/sign_in.dart';
 import 'package:radioklais/User/bloc/bloc_user.dart';
 import 'package:generic_bloc_provider/generic_bloc_provider.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class HomeKlais extends StatefulWidget {
   @override
@@ -24,6 +29,12 @@ class _KlaisRadio extends State<HomeKlais> {
   int currentIndex = 0;
   int tiempo = 0;
   UserBloc userBloc;
+  String fecha = "";
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final availableLocalesForDateFormatting = const [
+    "es_ES",
+  ];
+
   @override
   void dispose() {
     super.dispose();
@@ -32,7 +43,86 @@ class _KlaisRadio extends State<HomeKlais> {
   @override
   void initState() {
     AudioPlayer.setIosCategory(IosCategory.playback);
+    initializeDateFormatting();
+    var date = DateTime.now();
+    // prints Tuesday
+    fecha = DateFormat.yMMMMEEEEd('es_ES').format(date);
+    if (Platform.isIOS) {
+      _fcm.requestNotificationPermissions(
+          IosNotificationSettings(sound: true, badge: true, alert: true));
+    }
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print(message['data']);
+        if (message['data']['title'] == "promo") {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    backgroundColor: Colors.black87,
+                    content: Container(
+                      height: 250.0,
+                      child: ListTile(
+                          title: Text(message['notification']['title'],
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: "Ubuntu",
+                                  fontSize: 20.0)),
+                          subtitle: Container(
+                            width: 250.0,
+                            height: 200.0,
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  margin:
+                                      EdgeInsets.only(top: 6.0, bottom: 6.0),
+                                  child: Text(message['notification']['body'],
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: "Ubuntu",
+                                          fontSize: 16.0)),
+                                ),
+                                Image(
+                                  width: 250.0,
+                                  height: 140.0,
+                                  image: NetworkImage(message['data']['image']),
+                                )
+                              ],
+                            ),
+                          )),
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Aceptar"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  ));
+        }
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+    );
 
+    _fcm.getToken().then((values) => {
+          Firestore.instance
+              .collection("dispositivos_registrados")
+              .where("token", isEqualTo: values)
+              .getDocuments()
+              .then((value) => {
+                print(value.documents.isNotEmpty),
+                if(value.documents.isNotEmpty){
+
+                }else{
+                  Firestore.instance.collection("dispositivos_registrados").add({
+                    "token":values
+                  })
+                }
+              })
+        });
     super.initState();
   }
 
@@ -46,14 +136,15 @@ class _KlaisRadio extends State<HomeKlais> {
     HomeRadioReproductor(),
     ProgramacionSemanal(),
   ];
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     userBloc = BlocProvider.of<UserBloc>(context);
     if (userBloc.estadoPlayer == null) {
       userBloc.player.setUrl(
           "https://adminradio.klais.ec/radio/8020/radio.mp3?1593215539");
     }
+
     return Scaffold(
       drawer: _handleCurrentSesion(),
       appBar: AppBar(
@@ -76,7 +167,7 @@ class _KlaisRadio extends State<HomeKlais> {
                     textAlign: TextAlign.start,
                   ),
                   Text(
-                    'Lunes 21 de Junio',
+                    "$fecha",
                     style: TextStyle(fontSize: 14.0, fontFamily: "Ubuntu"),
                     textAlign: TextAlign.start,
                   )
@@ -224,57 +315,65 @@ class _KlaisRadio extends State<HomeKlais> {
                             )
                           else if (AudioPlaybackState.stopped ==
                               userBloc.estadoRadio)
-                            IconButton(
-                              icon: Icon(
-                                Icons.play_arrow,
-                                color: Colors.red[900],
+                            Container(
+                              child: FloatingActionButton(
+                                child: Icon(
+                                  FontAwesomeIcons.play,
+                                  color: Colors.red[900],
+                                  size: 25.0,
+                                ),
+                                onPressed: () {
+                                  userBloc.tiempo = 0;
+                                  userBloc.estadoRadio =
+                                      AudioPlaybackState.playing;
+                                  userBloc.player.play();
+                                },
+                                backgroundColor: Colors.black,
                               ),
-                              iconSize: 40.0,
-                              onPressed: () {
-                                userBloc.tiempo = 0;
-                                userBloc.estadoRadio =
-                                    AudioPlaybackState.playing;
-                                userBloc.player.play();
-                              },
                             )
                           else if (AudioPlaybackState.paused ==
                               userBloc.estadoRadio)
-                            IconButton(
-                              icon: Icon(
-                                Icons.play_arrow,
+                            Container(
+                                child: FloatingActionButton(
+                              child: Icon(
+                                FontAwesomeIcons.play,
                                 color: Colors.red[900],
+                                size: 25.0,
                               ),
-                              iconSize: 40.0,
                               onPressed: () {
                                 userBloc.tiempo = 0;
                                 userBloc.estadoRadio =
                                     AudioPlaybackState.playing;
                                 userBloc.player.play();
                               },
-                            )
+                              backgroundColor: Colors.black,
+                            ))
                           else if (AudioPlaybackState.playing ==
                               userBloc.estadoRadio)
-                            IconButton(
-                              icon: Icon(
-                                Icons.pause,
+                            Container(
+                                child: FloatingActionButton(
+                              child: Icon(
+                                FontAwesomeIcons.pause,
                                 color: Colors.red[900],
+                                size: 25.0,
                               ),
-                              iconSize: 40.0,
                               onPressed: () {
                                 userBloc.estadoRadio =
                                     AudioPlaybackState.paused;
                                 userBloc.tiempo = 0;
                                 userBloc.player.stop();
                               },
-                            )
+                              backgroundColor: Colors.black,
+                            ))
                           else if (userBloc.estadoRadio ==
                               AudioPlaybackState.completed)
-                            IconButton(
-                              icon: Icon(
-                                Icons.play_arrow,
+                            Container(
+                                child: FloatingActionButton(
+                              child: Icon(
+                                FontAwesomeIcons.play,
                                 color: Colors.red[900],
+                                size: 25.0,
                               ),
-                              iconSize: 40.0,
                               onPressed: () {
                                 var dura = Duration(
                                     hours: 0,
@@ -287,20 +386,23 @@ class _KlaisRadio extends State<HomeKlais> {
                                     AudioPlaybackState.completed;
                                 userBloc.tiempo = 0;
                               },
-                            )
+                            ))
                           else
-                            IconButton(
-                              icon: Icon(
-                                Icons.play_arrow,
-                                color: Colors.red[900],
+                            Container(
+                              child: FloatingActionButton(
+                                child: Icon(
+                                  FontAwesomeIcons.play,
+                                  color: Colors.red[900],
+                                  size: 25.0,
+                                ),
+                                onPressed: () {
+                                  userBloc.estadoRadio =
+                                      AudioPlaybackState.playing;
+                                  userBloc.tiempo = 0;
+                                  userBloc.player.play();
+                                },
+                                backgroundColor: Colors.black,
                               ),
-                              iconSize: 40.0,
-                              onPressed: () {
-                                userBloc.estadoRadio =
-                                    AudioPlaybackState.playing;
-                                userBloc.tiempo = 0;
-                                userBloc.player.play();
-                              },
                             ),
                         ]);
                       },
@@ -315,7 +417,8 @@ class _KlaisRadio extends State<HomeKlais> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   backgroundColor: Colors.black,
                   selectedIndex: indexTap,
-                  showElevation: true, // use this to remove appBar's elevation
+                  showElevation: true,
+                  // use this to remove appBar's elevation
                   onItemSelected: (index) => setState(() {
                     indexTap = index;
                   }),
@@ -468,6 +571,7 @@ class SeekBar extends StatefulWidget {
 
 class _SeekBarState extends State<SeekBar> {
   double _dragValue;
+
   @override
   Widget build(BuildContext context) {
     return Container(

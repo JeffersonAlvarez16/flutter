@@ -94,7 +94,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
               itemBuilder: (context, index) {
                 final item = snapshot.data.documents[index];
                 return Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
+                  margin: EdgeInsets.only(bottom: 0.0),
                   width: (width - 150.0),
                   child: Column(
                     children: <Widget>[
@@ -348,6 +348,16 @@ class _ReproductoRadio extends State<ReproductoRadio> {
                     child: Text(
                       "Auspiciantes",
                       style: TextStyle(color: Colors.white70, fontSize: 20.0),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 24.0),
+                    padding: EdgeInsets.only(left: 37.0, top: 20.0,right: 37.0
+                    ),
+                    height: 250,
+                    child: WebView(
+                      initialUrl: "https://view-banners.now.sh",
+                      javascriptMode: JavascriptMode.unrestricted,
                     ),
                   ),
                   auspiciantesA(context, width),
