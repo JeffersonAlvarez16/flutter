@@ -141,10 +141,15 @@ class _KlaisRadio extends State<HomeKlais> {
   Widget build(BuildContext context) {
     userBloc = BlocProvider.of<UserBloc>(context);
     if (userBloc.estadoPlayer == null) {
+      Firestore.instance.collection('url_radio').document('zYyzvRK930WDEZTEjhSD')
+          .get().then((DocumentSnapshot) =>{
       userBloc.player.setUrl(
-          "https://adminradio.klais.ec/radio/8020/radio.mp3?1593215539");
+      DocumentSnapshot.data['url'].toString())
     }
+      );
 
+
+    }
     return Scaffold(
       drawer: _handleCurrentSesion(),
       appBar: AppBar(

@@ -288,7 +288,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
                                               ),
                                               Container(
                                                 margin: EdgeInsets.only(
-                                                    right: 16.0),
+                                                    right: 8.0),
                                                 child: Text(
                                                   "EN VIVO",
                                                   style: TextStyle(
@@ -305,7 +305,7 @@ class _ReproductoRadio extends State<ReproductoRadio> {
                                       Text(
                                         "${items["tiempo"]}",
                                         style: TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 11.0,
                                             color: Colors.white30,
                                             fontWeight: FontWeight.bold),
                                       )

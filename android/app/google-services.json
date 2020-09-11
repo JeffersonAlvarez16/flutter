@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1002182005108:android:2d06cef83ae7cc5a6d1c21",
         "android_client_info": {
-          "package_name": "com.example.radioklais"
+          "package_name": "com.globaltech.radioklais"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "1002182005108-k1trb0kf3fvhcu48rk94eplhofntsmdk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.radioklais",
+            "package_name": "com.globaltech.radioklais",
             "certificate_hash": "2c68413a0e41991d9cc8bab2467637db91f129a9"
           }
         },
